@@ -6,7 +6,7 @@
 
     <groupId>io.github.jakczo</groupId>
     <artifactId>exif-renamer</artifactId>
-    <version>1.0-SNAPSHOT-develop2</version>
+    <version>1.2-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
