@@ -8,6 +8,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 public class Main {
@@ -32,6 +33,8 @@ public class Main {
 
         if (files == null) return;
 
+        Arrays.sort(files, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+
         // Formatter for EXIF timestamp
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
@@ -51,7 +54,7 @@ public class Main {
                 if (date == null) continue;
 
                 String formattedDate = formatter.format(date);
-                String newName = counter + "_IMG_" + formattedDate + ".jpg";
+                String newName = String.format("%05d_IMG_%s.jpg", counter, formattedDate);
                 Path source = file.toPath();
                 Path target = source.resolveSibling(newName);
                 Files.move(source, target);
