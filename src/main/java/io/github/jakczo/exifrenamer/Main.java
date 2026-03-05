@@ -9,20 +9,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
-
         if (args.length == 0) {
             System.out.println("Usage: java -jar exif-renamer.jar <folder_path>");
             return;
         }
 
         File folder = new File(args[0]);
-
         if (!folder.isDirectory()) {
             System.out.println("Provided path is not a folder.");
             return;
@@ -39,8 +35,7 @@ public class Main {
         // Formatter for EXIF timestamp
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
-        // Map to keep track of how many files share the same timestamp
-        Map<String, Integer> timestampCounter = new HashMap<>();
+        int counter = 1;
 
         for (File file : files) {
             try {
@@ -55,38 +50,16 @@ public class Main {
                 Date date = directory.getDateOriginal();
                 if (date == null) continue;
 
-                // Format the timestamp
                 String formattedDate = formatter.format(date);
-
-                // Base name for the new file
-                String baseName = "IMG_" + formattedDate;
-
-                // Get the counter for this timestamp
-                int count = timestampCounter.getOrDefault(baseName, 0);
-
-                // Create the final filename with zero-padded counter if needed
-                String newFileName;
-                if (count == 0) {
-                    newFileName = baseName + ".jpg";
-                } else {
-                    // zero-pad to 2 digits (_01, _02, etc.)
-                    newFileName = String.format("%s_%02d.jpg", baseName, count);
-                }
-
-                // Update the counter for this timestamp
-                timestampCounter.put(baseName, count + 1);
-
-                // Move/rename the file
+                String newName = counter + "_IMG_" + formattedDate + ".jpg";
                 Path source = file.toPath();
-                Path target = source.resolveSibling(newFileName);
-
+                Path target = source.resolveSibling(newName);
                 Files.move(source, target);
-
-                System.out.println("Renamed: " + file.getName() + " -> " + newFileName);
-
+                System.out.println(counter + ": Renamed " + file.getName() + " -> " + newName);
             } catch (Exception e) {
-                System.out.println("Failed: " + file.getName());
+                System.out.println(counter + ": Failed " + file.getName());
             }
+            counter++;
         }
     }
 }
